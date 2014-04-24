@@ -18,12 +18,13 @@ satRadius = 5
 physics.start()
 --function definitions
 
-local function calcForceG(mOne,mTwo)
+--[[local function calcForceG(mOne,mTwo)
 	local dX = mOne.x - mTwo.x
 	local dY = mOne.y - mTwo.y
-
+	print(dX.." "..dY)
+	
 	--forcetable for holding magnitude, x,y part of F
-	forceG = {}
+	local forceG = {}
 	forceG.magnitude = 0.01
 
 	forceG.distance = math.sqrt(dY^2+dX^2)	
@@ -32,12 +33,34 @@ local function calcForceG(mOne,mTwo)
 
 	forceG.y = forceG.magnitude*math.sin(angle)
 	forceG.x = forceG.magnitude*math.cos(angle)
-	print(angle)
-	print(forceG.x.." "..forceG.y)
+	--print(forceG.x.." "..forceG.y)
 	
 	return forceG
-end
+end--]]
 
+
+local function calcVelocityVector(objOne,objTwo)
+	local dX = objTwo.x - objOne.x
+	local dY = objTwo.y - objOne.y
+	local radius = math.sqrt(dY^2+dX^2)	
+	force = 5000
+	mass = 100
+	if dX > 0 then
+		local angle = math.acos(dX/radius)
+	end
+	local angle = math.asin(dY/radius)
+	local velocity = {}
+	velocity.mag = math.sqrt((force*mass)/radius)
+	velocity.x = math.sin(angle)*velocity.mag
+	velocity.y = math.cos(angle)*velocity.mag
+	if dX > 0 then
+		velocity.y = -1*math.cos(angle)*velocity.mag
+	
+	end
+	
+	return velocity
+
+end
 
 
 planet = display.newCircle(_CX,_CY,planetRadius)
@@ -46,17 +69,16 @@ physics.addBody(planet,"static", planetDetails); planet.gravityScale = 0
 planet.mass = 100 --EarthMass
 
 
-sat = display.newCircle(_CX-150,_CY,satRadius)
+sat = display.newCircle(_CX-100,_CY,satRadius)
 satProperties = {radius=satRadius}
 physics.addBody(sat,satProperties); sat.gravityScale = 0
-sat.mass = 1
-sat.force = calcForceG(planet,sat)
-sat:setLinearVelocity(0,-110)
+
+--centripetal force. 
 
 --mOne is oribiting mOne
-local function update(mOne, mTwo)
-	local force = calcForceG(mOne,mTwo)
-	mTwo:applyForce(force.x,force.y)
+local function update(objOne, objTwo)
+	local velocity = calcVelocityVector(objOne,objTwo)
+	objTwo:setLinearVelocity(velocity.x,velocity.y)
 end
 
 Runtime:addEventListener("enterFrame",
