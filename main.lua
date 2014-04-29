@@ -23,20 +23,41 @@ planet.mass = 100
 planet.gravityScale = 0
 
 
+local function drawVelocityVector(sPost,sVelo)
+
+
+end
+
 function spawnSat(event)
 	if event.phase == "began" then
-		local sat = satellite:new(event.x,event.y,5,100)
-		sat:link(planet)	
-		sat.object:setLinearVelocity(-50,0)
+		markX = event.x
+		markY = event.y
+	end
+	if event.phase == "moved" then
+		display.remove(line)
+
+		dx = event.x - markX
+		dy = event.y - markY
+
+
+		line = display.newLine(event.xStart,event.yStart
+						,event.xStart-dx,event.yStart-dy)
 		
-		local function update()
+		--line.exists = true
+	end
+	if event.phase == "ended" then
+		display.remove(line)
+		local sat = satellite:new(markX,markY,5,100)
+		sat:link(planet)	
+		sat.object:setLinearVelocity(-dx*2,-dy*2)
+
+	local function update()
 			local force = gravity.calcForceG(sat.link,sat.object)
 			sat.object:applyForce(force.x,force.y)
 
-		end
+	end
 
-		Runtime:addEventListener("enterFrame",function ()
-				update(); end)
+	Runtime:addEventListener("enterFrame",update)
 	end
 end
 

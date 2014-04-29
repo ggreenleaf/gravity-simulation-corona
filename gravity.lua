@@ -10,7 +10,7 @@ satRadius = 5
 
 local Gravity = {}
 local gravityMT = {__index = Gravity}
-Gravity.G = 100 --gravitational constant
+Gravity.G = 1000 --gravitational constant
 
 function Gravity.calcForceG(objOne,objTwo)
 	local dX = objTwo.x - objOne.x

@@ -17,6 +17,7 @@ function Satellite:new(x,y,r,d)
 	 physics.addBody(self.object,props)
 	 self.object.gravityScale = 0
 
+
 	 return self
 end
 --link an satellite to an object to calculate Gravity
