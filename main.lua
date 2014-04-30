@@ -11,55 +11,61 @@ physics = require("physics")
 math = require("math")
 gravity = require("gravity")
 satellite = require("satellite")
+widget = require("widget")
+planet = require("planet")
 CY = display.contentCenterY
 CX = display.contentCenterX
-planetProps = {radius=25,density=100}
+
 
 physics.start()
+display.setStatusBar(display.HiddenStatusBar)
 
-planet = display.newCircle(CX,CY,planetProps.radius)
-physics.addBody(planet,"static",{radius=25})
-planet.mass = 100
-planet.gravityScale = 0
+local widget = require( "widget" )
 
-
-local function drawVelocityVector(sPost,sVelo)
+-- Function to handle button events
 
 
-end
+
+p = planet:new(CX,CY,25,1000)
+
+
 
 function spawnSat(event)
 	if event.phase == "began" then
 		markX = event.x
 		markY = event.y
-	end
-	if event.phase == "moved" then
+	
+	elseif event.phase == "moved" then
 		display.remove(line)
 
 		dx = event.x - markX
 		dy = event.y - markY
-
-
 		line = display.newLine(event.xStart,event.yStart
 						,event.xStart-dx,event.yStart-dy)
 		
-		--line.exists = true
-	end
-	if event.phase == "ended" then
+		
+	elseif event.phase == "ended" then
 		display.remove(line)
-		local sat = satellite:new(markX,markY,5,100)
-		sat:link(planet)	
+		local sat = satellite:new(markX,markY,5,100)	
 		sat.object:setLinearVelocity(-dx*2,-dy*2)
 
-	local function update()
-			local force = gravity.calcForceG(sat.link,sat.object)
-			sat.object:applyForce(force.x,force.y)
 
-	end
 
+
+
+		local function update()
+			if sat.object.link ~= nil then
+				local force = gravity.calcForceG(sat.object.link,sat.object)
+				sat.object:applyForce(force.x,force.y)
+			end
+		end
+
+	
 	Runtime:addEventListener("enterFrame",update)
 	end
 end
+
+
 
 
 

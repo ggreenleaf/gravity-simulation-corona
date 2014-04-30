@@ -26,6 +26,7 @@ function Planet:new(x,y,r,m)
 	 self.object.mass = m
 	 self.object.gravityScale = 0
 
+	 self.field.planetLink = self.object
 
 	 return self
 end
