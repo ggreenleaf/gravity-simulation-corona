@@ -1,6 +1,6 @@
 
 
-
+gravity = require("gravity")
 local Satellite = {}
 local satelliteMT = {__index = Satellite}
 
@@ -9,6 +9,8 @@ local satelliteMT = {__index = Satellite}
 function Satellite:linkObject(obj)
 	self.object.link = obj
 end
+
+
 
 function Satellite:new(x,y,r,d)
 	 local self = {}
@@ -20,26 +22,29 @@ function Satellite:new(x,y,r,d)
 	 self.object.gravityScale = 0
 	 self.object.name = "satellite"
 
-	 local function onCollision(self,event)
-	 	if event.other.name == "field" then
-	 		if (event.phase == "began" ) then
-	 			self.link = event.other.planetLink
-	 		elseif (event.phase == "ended") then
-	 			self.link = nil
-	 		end
-	 	end	
-	 end
-
-	 self.object.collision = onCollision
-	 self.object:addEventListener("collision",self.object)
 
 	 return self
 end
 --link an satellite to an object to calculate Gravity
-
-
 function Satellite:destroy()
 	self.object:removeSelf()
+end
+
+function Satellite:collision(event)
+	if event.object1.name == "field" then
+		if event.phase == "began" then
+			self.link = event.object1.link
+		elseif event.phase == "ended" then
+			self.link = nil
+		end
+	end
+end
+
+function Satellite:enterFrame(event)
+	if self.link ~= nil then
+		local force = Gravity.calcForceG(self.link,self.object)
+		self.object:applyForce(force.x,force.y)
+	end
 end
 
 
