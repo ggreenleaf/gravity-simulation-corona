@@ -20,7 +20,20 @@ function Satellite:new(x,y,r,d)
 
 	 physics.addBody(self.object,props)
 	 self.object.gravityScale = 0
-	 self.object.name = "satellite"
+	 self.object.name = x+y
+
+	local function satCollision(self,event)
+		if "field" == event.other.name then
+			if "began" == event.phase then
+				self.link = event.other.link
+			elseif "ended" == event.phase then
+				self.link = nil
+			end
+		end
+	end
+
+	self.object.collision = satCollision
+	self.object:addEventListener("collision",self.object)
 
 
 	 return self
@@ -30,24 +43,16 @@ function Satellite:destroy()
 	self.object:removeSelf()
 end
 
-function Satellite:collision(event)
-	if event.object1.name == "field" then
-		if event.phase == "began" then
-			self.link = event.object1.link
-		elseif event.phase == "ended" then
-			self.link = nil
-		end
-	end
-end
-
-function Satellite:enterFrame(event)
-	if self.link ~= nil then
-		local force = Gravity.calcForceG(self.link,self.object)
+function Satellite:enterFrame()
+	if self.object.link ~= nil then
+		local force = Gravity.calcForceG(self.object.link,self.object)
 		self.object:applyForce(force.x,force.y)
 	end
 end
 
 
+
+--Satellite.collision = 
 
 
 return Satellite

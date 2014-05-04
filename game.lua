@@ -11,29 +11,59 @@ function Game:new()
 	local self = {}
 	setmetatable(self,gameMT)
 	p = Planet:new(CX,CY,25,1000)
-
+	self.draw = "sat"
+	self.satCount = 0
 	return self
 end
 
 function Game:touch( event )
-	if event.phase == "began" then
-		markX = event.x
-		markY = event.y
-		dx = 0
-		dy = 0
-	elseif event.phase == "moved" then
-		display.remove(line)
-		dx = event.x - markX
-		dy = event.y - markY
+	if "sat" == self.draw then
+		if "began" == event.phase then
+			markX = event.x
+			markY = event.y
+			dx = 0
+			dy = 0
+		elseif "moved" == event.phase then
+			display.remove(line)
+			dx = event.x - markX
+			dy = event.y - markY
 
-		line = display.newLine(event.xStart,event.yStart
-						,event.xStart-dx,event.yStart-dy)	
-	elseif event.phase == "ended" then
-		display.remove(line)
-		local sat = Satellite:new(markX,markY,5,100)	
-		sat.object:setLinearVelocity(-dx*2,-dy*2)
-		Runtime:addEventListener("collision",sat)
-		Runtime:addEventListener("enterFrame",sat)
+			line = display.newLine(event.xStart,event.yStart
+							,event.xStart-dx,event.yStart-dy)	
+		elseif "ended" == event.phase then
+			display.remove(line)
+			sat = Satellite:new(markX,markY,5,100)
+			sat.object:setLinearVelocity(-dx*2,-dy*2)
+			Runtime:addEventListener("enterFrame",sat)
+		end
+	elseif "planet" == self.draw then
+		if "began" == event.phase then
+			markX = event.x
+			markY = event.y
+			dx = 0
+			dy = 0
+		elseif "moved" == event.phase then
+			display.remove(line)
+			dx = event.x - markX
+			dy = event.y - markY
+			line = display.newLine(event.xStart,event.yStart,
+									event.xStart+dx, event.yStart+dy)
+		elseif "ended" == event.phase then
+			display.remove(line)
+			--local planet = Planet:new()
+		end
+
+
+	end
+end
+
+function Game:key(event)
+	if "down" == event.phase then
+		if "s" == event.keyName then
+			self.draw = "sat"
+		elseif "p" == event.keyName then
+			self.draw = "planet"
+		end
 	end
 end
 
