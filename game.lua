@@ -10,7 +10,7 @@ local gameMT = {__index = Game}
 function Game:new()
 	local self = {}
 	setmetatable(self,gameMT)
-	p = Planet:new(CX,CY,25,1000)
+	--p = Planet:new(CX,CY,25,1000)
 	self.draw = "sat"
 	self.satCount = 0
 	return self
@@ -50,7 +50,9 @@ function Game:touch( event )
 									event.xStart+dx, event.yStart+dy)
 		elseif "ended" == event.phase then
 			display.remove(line)
-			--local planet = Planet:new()
+			local radius = math.sqrt(dx^2+dy^2)/2
+			local center = {x=markX+dx/2,y=markY+dy/2}
+			local planet = Planet:new(center.x,center.y,radius,100)
 		end
 
 
